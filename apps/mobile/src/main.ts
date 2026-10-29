@@ -1,7 +1,13 @@
 import { App } from "@capacitor/app";
 import { Preferences } from "@capacitor/preferences";
-import { createGame } from "@compose-sit/game-client";
+import { createGame, type Game } from "@compose-sit/game-client";
 import { createWebHost } from "@compose-sit/host-web";
+
+declare global {
+  interface Window {
+    __composeSitReplay?: () => ReturnType<Game["exportReplay"]> | undefined;
+  }
+}
 
 const canvas = document.querySelector("canvas"),
   container = document.querySelector<HTMLElement>("#game");
@@ -28,6 +34,7 @@ try {
   const game = await createGame(host, {
     seed: crypto.getRandomValues(new Uint32Array(1))[0] ?? 1,
   });
+  window.__composeSitReplay = () => game.exportReplay();
   document.querySelector("#status")?.remove();
   const state = await App.addListener("appStateChange", ({ isActive }) => {
     game.suspend("native-background", !isActive);
@@ -38,6 +45,7 @@ try {
   if (import.meta.hot)
     import.meta.hot.dispose(() => {
       game.dispose();
+      delete window.__composeSitReplay;
       void state.remove();
       void back.remove();
     });
