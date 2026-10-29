@@ -7,11 +7,19 @@ export default defineConfig({
   workers: 1,
   fullyParallel: false,
   use: { baseURL: `http://127.0.0.1:${port}`, trace: "retain-on-failure" },
-  webServer: {
-    command: `pnpm build:web && pnpm exec vite preview --config apps/web/vite.config.ts --host 127.0.0.1 --port ${port}`,
-    port,
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: [
+    {
+      command: `pnpm build:web && pnpm exec vite preview --config apps/web/vite.config.ts --host 127.0.0.1 --port ${port}`,
+      port,
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      command:
+        "pnpm exec vite build --config tests/fixtures/endgame/vite.config.ts && pnpm exec vite preview --config tests/fixtures/endgame/vite.config.ts --host 127.0.0.1 --port 4175",
+      port: 4175,
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
   projects: [
     {
       name: "chromium",

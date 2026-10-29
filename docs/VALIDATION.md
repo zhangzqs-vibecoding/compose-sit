@@ -9,7 +9,7 @@
 - `pnpm check`：格式/lint、完整 TS、无 DOM/Node 类型的 core/runtime、独立微信类型检查、依赖方向和循环依赖。
 - `pnpm test`：19 项测试，包括真实 Planck 掉落/合成/三体接触/封顶奖励/越线结算、暂停原因、同种子重放、200 个有效初始圆体、固定步长/DPR 和微信 Canvas 契约。
 - Web 生产构建：桌面与手机视口中实际显示徽章、位图文字、分数和图鉴，确认真实物理合成、拖动、暂停与重开。
-- Playwright 的桌面 Chrome、手机视口 Chrome、WebKit 共9项生产产物 E2E通过，覆盖投放合成、暂停、布局调整、重开、存储不可用、必要资源加载失败重试。测试按固定时钟推进，不依赖软件 GPU 达到60FPS；WebKit仍不等于iPhone实机。
+- Playwright 的桌面 Chrome、手机视口 Chrome、WebKit 共12项浏览器 E2E通过，覆盖投放合成、暂停、布局调整、重开、存储不可用、必要资源加载失败重试；另用独立构建的真实物理场景验证失败结算、最高分与画布重开。测试按固定时钟推进，不依赖软件 GPU 达到60FPS；WebKit仍不等于iPhone实机。
 - 微信 IIFE 在无 window/document/navigator 的 VM 宿主中执行，确认 bootstrap 到达预期的缺少 GPU 错误；这是导入顺序 smoke，不代表真实微信 GPU 验收。
 - 微信产物为独立 IIFE game.js、game.json、开发者工具配置及包内资源。依赖扫描不包含 Planck testbed/stage-js。
 - Capacitor Android 和 iOS 原生工程已生成并同步本地前端资源，包含 App/Preferences 插件，无远端 server.url。
