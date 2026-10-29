@@ -76,7 +76,7 @@ export interface Rules {
   readonly opening: readonly number[];
   readonly randomLevels: number;
 }
-export const RULES_VERSION = 1;
+export const RULES_VERSION = 2;
 export const DEFAULT_RULES: Rules = {
   width: 720,
   height: 1280,
@@ -88,7 +88,7 @@ export const DEFAULT_RULES: Rules = {
   cooldownTicks: 60,
   previewTicks: 30,
   celebrationTicks: 180,
-  gravity: -3,
+  gravity: -9,
   dropSpeed: -8,
   mergeSpeed: -1,
   pixelsPerMeter: 100,

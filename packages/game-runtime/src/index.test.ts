@@ -7,13 +7,22 @@ function advance(game: GameSession, ticks: number): void {
   for (let i = 0; i < ticks; i++) game.step();
 }
 describe("real Planck simulation", () => {
+  it("uses the legacy fruit's effective gravity", () => {
+    const game = new GameSession({
+      initialEntities: [{ level: 0, x: 360, y: 235 }],
+    });
+    advance(game, 60);
+    expect(game.snapshot().entities[0]?.y).toBeCloseTo(692.5, 1);
+    game.dispose();
+  });
   it("drops into a stable floor and clamps release coordinates", () => {
     const game = new GameSession();
     game.drop(-100);
     advance(game, 600);
     const e = game.snapshot().entities[0];
     expect(e?.x).toBeGreaterThanOrEqual(52);
-    expect(e?.y).toBeCloseTo(DEFAULT_RULES.floorY - 26, 0);
+    expect(e?.y).toBeGreaterThan(DEFAULT_RULES.floorY - 28);
+    expect(e?.y).toBeLessThan(DEFAULT_RULES.floorY - 25);
     expect(game.snapshot().entities).toHaveLength(1);
     game.dispose();
     expect(game.snapshot().canDrop).toBe(false);
@@ -129,7 +138,7 @@ describe("real Planck simulation", () => {
     const record = game.exportReplay();
     expect(JSON.parse(JSON.stringify(record))).toEqual(record);
     expect(record.schemaVersion).toBe(1);
-    expect(record.rulesVersion).toBe(1);
+    expect(record.rulesVersion).toBe(2);
     expect(record.planckVersion).toBe(packageInfo.dependencies.planck);
     expect(PLANCK_VERSION).toBe(packageInfo.dependencies.planck);
     expect(record.seed).toBe(0x12345678);

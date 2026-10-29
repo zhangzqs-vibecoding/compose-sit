@@ -1,1 +1,34 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#e8f0f4"><meta name="description" content="拖动学校徽章，相同徽章碰撞合成，向上海应用技术大学前进。"><link rel="icon" href="data:,"/><title>合成上应大 · 校园图鉴</title></head><body><main><aside class="intro"><div class="eyebrow">COMPOSE SIT / CAMPUS COLLECTION</div><h1>从一次碰撞，<br>到一所大学。<span>合成上应大 · 校园图鉴</span></h1><div class="rule"></div><p>拖动徽章，选择落点。<br>相同的徽章相遇，合成下一所学校。<br>收集 11 枚校园印记，向上应大前进。</p><div class="keys">← → 调整位置 &nbsp; SPACE 投放<br>P / ESC 暂停 &nbsp; M 静音</div><nav class="toolbar" aria-label="游戏控制"><button type="button" data-action="pause">暂停 / 继续</button><button type="button" data-action="mute">切换声音</button><button type="button" data-action="restart">重新开始</button></nav><p class="note">校园徽章用于学习与交流。<br><a href="https://github.com/zhangzqs-vibecoding/compose-sit" target="_blank" rel="noreferrer">关于这个游戏 ↗</a></p></aside><section id="game" aria-label="合成上应大游戏"><canvas tabindex="0" aria-label="游戏画布：拖动释放徽章，或使用左右键与空格"></canvas><div id="status" role="status">正在整理校园图鉴…</div></section></main><p id="announcement" class="sr-only" aria-live="polite"></p><script type="module" src="/src/main.ts"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#e8f0f4" />
+    <meta name="description" content="拖动学校徽章，让相同徽章碰撞升级，最终合成上海应用技术大学校徽。" />
+    <link rel="icon" href="data:," />
+    <title>合成上应大</title>
+  </head>
+  <body>
+    <main>
+      <aside class="intro">
+        <div class="eyebrow">COMPOSE SIT / FINAL BADGE</div>
+        <h1>一路合成，<br />直到上应大。<span>最终目标：上应大校徽</span></h1>
+        <div class="rule"></div>
+        <p>拖动徽章选择落点。<br />相同徽章碰撞，升级到下一枚。<br />最终合成上海应用技术大学的校徽。</p>
+        <div class="keys">← → 调整位置 &nbsp; SPACE 投放<br />P / ESC 暂停 &nbsp; M 静音</div>
+        <nav class="toolbar" aria-label="游戏控制">
+          <button type="button" data-action="pause">暂停 / 继续</button>
+          <button type="button" data-action="mute">切换声音</button>
+          <button type="button" data-action="restart">重新开始</button>
+        </nav>
+        <p class="note">校园徽章用于学习与交流。<br /><a href="https://github.com/zhangzqs-vibecoding/compose-sit" target="_blank" rel="noreferrer">关于这个游戏 ↗</a></p>
+      </aside>
+      <section id="game" aria-label="合成上应大游戏">
+        <canvas tabindex="0" aria-label="游戏画布：拖动释放徽章，或使用左右键与空格"></canvas>
+        <div id="status" role="status">正在加载游戏…</div>
+      </section>
+    </main>
+    <p id="announcement" class="sr-only" aria-live="polite"></p>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
