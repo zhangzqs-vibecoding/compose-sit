@@ -1,0 +1,12 @@
+{
+  "name": "@compose-sit/game-runtime",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@compose-sit/game-core": "workspace:*",
+    "planck": "1.5.1"
+  }
+}

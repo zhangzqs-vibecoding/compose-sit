@@ -1,0 +1,11 @@
+{
+  "name": "@compose-sit/wechat",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@compose-sit/game-client": "workspace:*",
+    "@compose-sit/game-core": "workspace:*",
+    "pixi.js": "8.22.0",
+    "minigame-api-typings": "3.8.21"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM"],
+    "types": ["minigame-api-typings"],
+    "baseUrl": ".",
+    "paths": {
+      "@compose-sit/pixi-environment": [
+        "node_modules/pixi.js/lib/environment/adapter.d.ts"
+      ]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/*.test.ts"]
+}
