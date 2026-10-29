@@ -2,6 +2,12 @@ import { createGame, type Game } from "@compose-sit/game-client";
 import { createWebHost } from "@compose-sit/host-web";
 import "./style.css";
 
+declare global {
+  interface Window {
+    __composeSitReplay?: () => ReturnType<Game["exportReplay"]> | undefined;
+  }
+}
+
 const container = document.querySelector<HTMLElement>("#game");
 const canvas = document.querySelector<HTMLCanvasElement>("canvas");
 const status = document.querySelector<HTMLElement>("#status");
@@ -9,6 +15,7 @@ const announcement = document.querySelector<HTMLElement>("#announcement");
 if (!container || !canvas || !status) throw new Error("Missing game mount");
 let game: Game | undefined;
 let disposed = false;
+window.__composeSitReplay = () => game?.exportReplay();
 const host = createWebHost({
   baseUrl: import.meta.env.BASE_URL,
   container,
@@ -45,5 +52,6 @@ for (const button of document.querySelectorAll<HTMLButtonElement>(
 if (import.meta.hot)
   import.meta.hot.dispose(() => {
     disposed = true;
+    delete window.__composeSitReplay;
     game?.dispose();
   });

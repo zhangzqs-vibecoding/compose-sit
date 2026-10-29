@@ -9,6 +9,7 @@ import {
 import {
   type GameEvent,
   GameSession,
+  type ReplayRecord,
   type SessionOptions,
   type Snapshot,
 } from "@compose-sit/game-runtime";
@@ -24,10 +25,12 @@ import type { Action, Host, Input } from "./host";
 import { FixedLoop, layout, logicalPoint } from "./loop";
 import { BitmapLabel } from "./text";
 
+export type { ReplayRecord } from "@compose-sit/game-runtime";
 export type { Action, Host, Input, Sound } from "./host";
 export { FixedLoop, layout, logicalPoint } from "./loop";
 export interface Game {
   snapshot(): Snapshot;
+  exportReplay(): ReplayRecord;
   action(action: Action): void;
   suspend(reason: string, suspended: boolean): void;
   dispose(): void;
@@ -462,6 +465,7 @@ export async function createGame(
   host.announce("拖动选择位置，松手投放。相同徽章碰撞升级。");
   return {
     snapshot: () => session.snapshot(),
+    exportReplay: () => session.exportReplay(),
     action,
     suspend(reason, value) {
       session.setPaused(reason, value);

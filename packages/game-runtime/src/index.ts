@@ -6,11 +6,13 @@ import {
   mergePoints,
   overflowTime,
   Random,
+  RULES_VERSION,
   type Rules,
   selectMerges,
   validateRules,
 } from "@compose-sit/game-core";
 import { type Body, Box, Circle, Vec2, World } from "planck";
+export const PLANCK_VERSION = "1.5.1";
 export type Status = "ready" | "playing" | "paused" | "gameOver";
 export interface EntitySnapshot {
   readonly id: number;
@@ -59,9 +61,28 @@ export interface SessionOptions {
   readonly rules?: Rules;
   readonly initialEntities?: readonly InitialEntity[];
 }
+export interface RecordedInput {
+  readonly tick: number;
+  readonly order: number;
+  readonly type: "drop";
+  readonly x: number;
+}
+export interface ReplayRecord {
+  readonly schemaVersion: 1;
+  readonly rulesVersion: number;
+  readonly planckVersion: string;
+  readonly seed: number;
+  readonly sessionId: number;
+  readonly endTick: number;
+  readonly rules: Rules;
+  readonly initialEntities: readonly InitialEntity[];
+  readonly inputs: readonly RecordedInput[];
+}
 export class GameSession {
   readonly rules: Rules;
   readonly sessionId: number;
+  private readonly seed: number;
+  private readonly initialEntities: readonly InitialEntity[];
   private world: World;
   private entities = new Map<number, Entity>();
   private random: Random;
@@ -77,11 +98,16 @@ export class GameSession {
   private status: "ready" | "playing" | "gameOver" = "ready";
   private pauses = new Set<string>();
   private drops: number[] = [];
+  private inputs: RecordedInput[] = [];
   private disposed = false;
   constructor(options: SessionOptions = {}) {
     this.rules = validateRules(options.rules ?? DEFAULT_RULES);
     this.sessionId = options.sessionId ?? 1;
-    this.random = new Random(options.seed ?? 1);
+    this.seed = (options.seed ?? 1) >>> 0;
+    this.random = new Random(this.seed);
+    this.initialEntities = (options.initialEntities ?? []).map((entity) => ({
+      ...entity,
+    }));
     this.preview = generationLevel(0, this.rules, this.random);
     this.world = new World({
       gravity: Vec2(0, this.rules.gravity),
@@ -102,7 +128,7 @@ export class GameSession {
         .createFixture(Box(0.2, r.height / p, Vec2(x, r.height / p / 2)), {
           friction: r.friction,
         });
-    for (const entity of options.initialEntities ?? [])
+    for (const entity of this.initialEntities)
       this.spawn(entity.level, entity.x, entity.y, 0, entity.entered ?? true);
   }
   setPaused(reason: string, paused: boolean): void {
@@ -131,6 +157,12 @@ export class GameSession {
       const level = this.preview;
       const at = clampDrop(x, levelAt(level).radius, this.rules);
       this.spawn(level, at, this.rules.spawnY, this.rules.dropSpeed, false);
+      this.inputs.push({
+        tick: this.tick,
+        order: this.inputs.length + 1,
+        type: "drop",
+        x,
+      });
       this.status = "playing";
       this.readyAt = this.tick + this.rules.cooldownTicks;
       this.preview = generationLevel(
@@ -236,6 +268,19 @@ export class GameSession {
         angle: -e.body.getAngle(),
         overflow: e.overflow,
       })),
+    };
+  }
+  exportReplay(): ReplayRecord {
+    return {
+      schemaVersion: 1,
+      rulesVersion: RULES_VERSION,
+      planckVersion: PLANCK_VERSION,
+      seed: this.seed,
+      sessionId: this.sessionId,
+      endTick: this.tick,
+      rules: this.rules,
+      initialEntities: this.initialEntities.map((entity) => ({ ...entity })),
+      inputs: this.inputs.map((input) => ({ ...input })),
     };
   }
   drainEvents(): GameEvent[] {

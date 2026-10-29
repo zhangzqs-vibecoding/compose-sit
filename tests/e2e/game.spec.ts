@@ -28,6 +28,11 @@ test("loads local assets, merges with real physics, pauses, resizes and restarts
   await expect(page.locator("#announcement")).toContainText("合成", {
     timeout: 5000,
   });
+  const replay = await page.evaluate(() => window.__composeSitReplay?.());
+  expect(replay?.rulesVersion).toBe(1);
+  expect(replay?.planckVersion).toBe("1.5.1");
+  expect(replay?.inputs.map((input) => input.order)).toEqual([1, 2]);
+  expect(replay?.inputs.every((input) => input.tick > 0)).toBe(true);
   await page.keyboard.press("p");
   await page.clock.runFor(50);
   await page.keyboard.press("p");
@@ -59,6 +64,9 @@ test("loads local assets, merges with real physics, pauses, resizes and restarts
     await page.mouse.click(ox + 360 * scale, oy + 810 * scale);
   }
   await expect(page.locator("#announcement")).toContainText("新的一局");
+  expect(
+    (await page.evaluate(() => window.__composeSitReplay?.()))?.inputs,
+  ).toEqual([]);
   expect(errors).toEqual([]);
   expect(external).toEqual([]);
 });
