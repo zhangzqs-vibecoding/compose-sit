@@ -27,3 +27,31 @@ jobs:
             apps/wechat/dist
             apps/mobile/dist
             test-results
+
+  android:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:mobile
+      - run: pnpm mobile:sync
+      - run: ./gradlew --no-daemon assembleDebug
+        working-directory: apps/mobile/android
+      - name: Verify bundled game assets
+        run: |
+          unzip -Z1 apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk > "$RUNNER_TEMP/compose-apk-files.txt"
+          grep -Fxq 'assets/public/index.html' "$RUNNER_TEMP/compose-apk-files.txt"
+          grep -Fq 'assets/public/assets/' "$RUNNER_TEMP/compose-apk-files.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compose-sit-android-debug-apk
+          path: apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
