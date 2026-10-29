@@ -1,0 +1,68 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
+  "files": {
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/node_modules",
+      "!apps/mobile/android",
+      "!apps/mobile/ios",
+      "!assets",
+      "!pnpm-lock.yaml",
+      "!.playwright-cli",
+      "!test-results",
+      "!playwright-report",
+      "!**/dist-debug"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "suspicious": {
+        "noExplicitAny": "error"
+      }
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "packages/game-{core,runtime,client}/src/**",
+        "!**/*.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedGlobals": {
+              "level": "error",
+              "options": {
+                "deniedGlobals": {
+                  "window": "Use the injected host capabilities",
+                  "document": "Use the injected host capabilities",
+                  "wx": "Use the injected host capabilities",
+                  "navigator": "Use the injected host capabilities",
+                  "localStorage": "Use the injected host capabilities",
+                  "requestAnimationFrame": "Use the injected host capabilities",
+                  "cancelAnimationFrame": "Use the injected host capabilities",
+                  "Date": "Use the injected host capabilities",
+                  "performance": "Use the injected host capabilities"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

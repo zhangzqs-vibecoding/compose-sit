@@ -1,0 +1,34 @@
+{
+  "name": "compose-sit",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "vite --config apps/web/vite.config.ts --host 0.0.0.0",
+    "check": "biome check . && pnpm typecheck && pnpm boundaries",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.headless.json --noEmit && tsc -p apps/wechat/tsconfig.json --noEmit",
+    "boundaries": "depcruise packages apps --config .dependency-cruiser.cjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "build:web": "vite build --config apps/web/vite.config.ts",
+    "build:wechat": "vite build --config apps/wechat/vite.config.ts && node scripts/package-wechat.mjs",
+    "build:mobile": "vite build --config apps/mobile/vite.config.ts",
+    "mobile:sync": "pnpm --dir apps/mobile exec cap sync",
+    "bench": "tsx scripts/benchmark.ts",
+    "test:wechat-bootstrap": "node scripts/smoke-wechat.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.4",
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.10.0",
+    "dependency-cruiser": "17.3.3",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  }
+}

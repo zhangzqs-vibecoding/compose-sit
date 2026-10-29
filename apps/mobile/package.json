@@ -1,0 +1,15 @@
+{
+  "name": "@compose-sit/mobile",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@compose-sit/game-client": "workspace:*",
+    "@compose-sit/host-web": "workspace:*",
+    "@capacitor/core": "8.6.0",
+    "@capacitor/cli": "8.6.0",
+    "@capacitor/android": "8.6.0",
+    "@capacitor/ios": "8.6.0",
+    "@capacitor/app": "8.0.0",
+    "@capacitor/preferences": "8.0.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "@compose-sit/web",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@compose-sit/game-client": "workspace:*",
+    "@compose-sit/host-web": "workspace:*"
+  }
+}

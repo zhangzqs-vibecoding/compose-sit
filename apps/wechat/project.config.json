@@ -1,0 +1,8 @@
+{
+  "description": "合成上应大 · PixiJS + Planck.js",
+  "compileType": "game",
+  "libVersion": "3.17.0",
+  "appid": "touristappid",
+  "projectname": "compose-sit",
+  "setting": { "es6": false, "minified": false }
+}

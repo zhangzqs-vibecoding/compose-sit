@@ -1,0 +1,13 @@
+{
+  "name": "@compose-sit/game-client",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@compose-sit/game-core": "workspace:*",
+    "@compose-sit/game-runtime": "workspace:*",
+    "pixi.js": "8.22.0"
+  }
+}
