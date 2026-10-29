@@ -14,8 +14,19 @@ const host = createWebHost({
     if (node) node.textContent = text;
   },
 });
-await createGame(host, {
-  rules: { ...DEFAULT_RULES, dangerY: 1120, overflowTicks: 12 },
-  initialEntities: [{ level: 1, x: 360, y: DEFAULT_RULES.floorY - 39 }],
-});
+const goal = new URLSearchParams(location.search).has("goal");
+await createGame(
+  host,
+  goal
+    ? {
+        initialEntities: [
+          { level: 9, x: 210, y: 970 },
+          { level: 9, x: 510, y: 970 },
+        ],
+      }
+    : {
+        rules: { ...DEFAULT_RULES, dangerY: 1120, overflowTicks: 12 },
+        initialEntities: [{ level: 1, x: 360, y: DEFAULT_RULES.floorY - 39 }],
+      },
+);
 document.querySelector<HTMLElement>("#status")?.setAttribute("hidden", "");

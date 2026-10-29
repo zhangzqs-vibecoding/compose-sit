@@ -1,5 +1,15 @@
 import { expect, test } from "@playwright/test";
 
+test("reaching the final badge announces the goal", async ({ page }) => {
+  await page.clock.install();
+  await page.goto("http://127.0.0.1:4175/?goal=1");
+  await expect(page.locator("#status")).toBeHidden();
+  await page.clock.runFor(300);
+  await expect(page.locator("#announcement")).toContainText(
+    "目标达成！成功合成上应大校徽",
+  );
+});
+
 test("real overflow opens the result screen, saves score and restarts via canvas controls", async ({
   page,
 }) => {

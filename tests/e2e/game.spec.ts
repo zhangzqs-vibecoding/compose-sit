@@ -29,7 +29,7 @@ test("loads local assets, merges with real physics, pauses, resizes and restarts
     timeout: 5000,
   });
   const replay = await page.evaluate(() => window.__composeSitReplay?.());
-  expect(replay?.rulesVersion).toBe(1);
+  expect(replay?.rulesVersion).toBe(2);
   expect(replay?.planckVersion).toBe("1.5.1");
   expect(replay?.inputs.map((input) => input.order)).toEqual([1, 2]);
   expect(replay?.inputs.every((input) => input.tick > 0)).toBe(true);

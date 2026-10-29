@@ -1,8 +1,8 @@
-# 合成上应大 · 校园图鉴
+# 合成上应大
 
 [打开游戏](https://zhangzqs-vibecoding.github.io/compose-sit/)
 
-拖动学校徽章、选择落点，相同徽章碰撞合成下一所学校。11 级物理合成游戏，采用 **PixiJS 8 + Planck.js + TypeScript + pnpm + Vite 8**。设计与规则见 [issue #1](https://github.com/zhangzqs-vibecoding/compose-sit/issues/1)。
+拖动学校徽章、选择落点，让相同徽章碰撞升级，最终合成上海应用技术大学校徽。11 级物理合成游戏，采用 **PixiJS 8 + Planck.js + TypeScript + pnpm + Vite 8**。设计与规则见 [issue #1](https://github.com/zhangzqs-vibecoding/compose-sit/issues/1)。
 
 ## 开发
 
@@ -40,4 +40,4 @@ pnpm bench
 - `packages/host-web`：Web 与 WebView 共用的输入、音频、存储、资源及生命周期。
 - `apps/web`、`apps/wechat`、`apps/mobile`：薄入口与对应构建配置。
 
-[架构与规则](docs/ARCHITECTURE.md) · [资源来源与学校映射](docs/ASSETS.md)
+[架构与规则](docs/ARCHITECTURE.md) · [旧版手感参数对照](docs/HANDFEEL.md) · [资源来源与学校映射](docs/ASSETS.md)

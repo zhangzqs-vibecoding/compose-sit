@@ -140,7 +140,7 @@ export async function createGame(
     parent.addChild(view);
     return view;
   }
-  label("CAMPUS COLLECTION", 42, 37, 18, TEAL);
+  label("COMPOSE SIT / FINAL BADGE", 42, 37, 18, TEAL);
   label("合成上应大", 40, 66, 41);
   label("拖动选择位置，松手投放", 42, 124, 22, 0x6b8190);
   const scoreLabel = label("0", 44, 166, 42),
@@ -181,9 +181,10 @@ export async function createGame(
   const guide = new Graphics();
   board.addChild(guide, previewView, effectsView);
   board.addChild(new Graphics().roundRect(24, r.floorY, 672, 18, 7).fill(TEAL));
-  label("校园图鉴", 42, 1171, 18);
-  const progressLabel = label("1 / 11", 674, 1171, 18, TEAL, "right");
-  const badges: Container[] = [];
+  label("最终目标", 42, 1171, 18);
+  label("合成上应大校徽", 42, 1204, 28);
+  const progressLabel = label("当前最高：北大", 42, 1238, 17, TEAL);
+  const goalLevel = LEVELS.length - 1;
   function badge(level: number, radius: number): Container {
     const root = new Container();
     root.addChild(
@@ -204,12 +205,9 @@ export async function createGame(
     }
     return root;
   }
-  for (const level of LEVELS) {
-    const icon = badge(level.id, 21);
-    icon.position.set(65 + level.id * 59, 1223);
-    board.addChild(icon);
-    badges.push(icon);
-  }
+  const goalBadge = badge(goalLevel, 32);
+  goalBadge.position.set(624, 1211);
+  board.addChild(goalBadge);
   board.addChild(overlay);
   const overlayBg = new Graphics()
     .roundRect(24, 296, 672, 850, 24)
@@ -222,7 +220,7 @@ export async function createGame(
   overlay.visible = false;
   const topMessage = label("", 360, 270, 18, TEAL, "center");
   let currentPreview = -1;
-  const collected = new Set<number>([0]);
+  let highestLevel = 0;
   function resize(): void {
     const viewport = host.viewport();
     renderer.resolution = Math.min(viewport.pixelRatio, 2);
@@ -255,8 +253,7 @@ export async function createGame(
     effects.length = 0;
     previous = session.snapshot();
     currentPreview = -1;
-    collected.clear();
-    collected.add(0);
+    highestLevel = 0;
     pause();
     host.announce("新的一局，拖动选择位置，松手投放");
   }
@@ -341,7 +338,9 @@ export async function createGame(
       effectsView.addChild(view);
       effects.push({ view, life: 0, duration: host.reducedMotion ? 1 : 36 });
       host.announce(
-        `合成${levelAt(event.level).name}，当前得分${session.snapshot().score}`,
+        event.type === "crown"
+          ? `目标达成！成功合成上应大校徽，当前得分${session.snapshot().score}`
+          : `合成${levelAt(event.level).name}，当前得分${session.snapshot().score}`,
       );
     }
     if (event.type === "gameOver") {
@@ -379,10 +378,13 @@ export async function createGame(
       view.rotation = old.angle + (entity.angle - old.angle) * alpha;
       view.alpha =
         entity.overflow > 0 ? 0.65 + 0.35 * Math.sin(snap.tick * 0.15) ** 2 : 1;
-      collected.add(entity.level);
+      highestLevel = Math.max(highestLevel, entity.level);
     }
-    for (const [i, b] of badges.entries()) b.alpha = collected.has(i) ? 1 : 0.2;
-    progressLabel.set(`${collected.size} / 11`);
+    progressLabel.set(
+      highestLevel === goalLevel
+        ? "目标达成！"
+        : `当前最高：${levelAt(highestLevel).shortName}`,
+    );
     if (currentPreview !== snap.preview) {
       for (const child of previewView.removeChildren())
         child.destroy({ children: true });
@@ -403,7 +405,8 @@ export async function createGame(
       )
         guide.circle(aim, y, 2).fill({ color: TEAL, alpha: 0.25 });
     overlay.visible = snap.status === "paused" || snap.status === "gameOver";
-    overlayTitle.set(snap.status === "gameOver" ? "本局结束" : "暂停");
+    const resultTitle = highestLevel === goalLevel ? "目标达成" : "本局结束";
+    overlayTitle.set(snap.status === "gameOver" ? resultTitle : "暂停");
     resumeButton.set(snap.status === "gameOver" ? "再来一次" : "继续游戏");
     overlayDetail.set(
       snap.status === "gameOver"
@@ -412,7 +415,7 @@ export async function createGame(
     );
     let message = "下一颗准备中";
     if (snap.canDrop) message = "拖动徽章，松手投放";
-    if (snap.celebration) message = "恭喜获得上应大！";
+    if (snap.celebration) message = "目标达成！成功合成上应大校徽";
     topMessage.set(message);
     renderer.render(stage);
   }
