@@ -77,6 +77,7 @@ const inspectExpression = `(() => {
     rulesVersion: replay?.rulesVersion,
     inputCount: replay?.inputs.length,
     tick: replay?.endTick,
+    pointerEvents: window.__smokePointerEvents ?? [],
   };
 })()`;
 
@@ -115,29 +116,58 @@ try {
       ? state
       : undefined;
   });
+  await evaluate(
+    target.webSocketDebuggerUrl,
+    `(() => {
+      window.__smokePointerEvents = [];
+      const canvas = document.querySelector("canvas");
+      for (const type of ["pointerdown", "pointerup", "pointercancel"])
+        canvas.addEventListener(type, (event) => {
+          window.__smokePointerEvents.push({ type, x: event.clientX, y: event.clientY });
+        }, { capture: true });
+      return true;
+    })()`,
+  );
   const size = adb("shell", "wm", "size").match(/(\d+)x(\d+)/);
   if (!size) throw new Error("Could not read emulator display size");
-  adb(
-    "shell",
-    "input",
-    "tap",
-    String(Math.floor(Number(size[1]) / 2)),
-    String(Math.floor(Number(size[2]) / 2)),
-  );
-  const played = await waitFor("touch drop", async () => {
-    const state = await evaluate(
-      target.webSocketDebuggerUrl,
-      inspectExpression,
+  let played;
+  let tapAttempts = 0;
+  for (; tapAttempts < 3 && !played; tapAttempts++) {
+    adb(
+      "shell",
+      "input",
+      "tap",
+      String(Math.floor(Number(size[1]) / 2)),
+      String(Math.floor(Number(size[2]) / 2)),
     );
-    return state.inputCount === 1 && state.tick > ready.tick
-      ? state
-      : undefined;
-  });
+    try {
+      played = await waitFor(
+        "touch drop",
+        async () => {
+          const state = await evaluate(
+            target.webSocketDebuggerUrl,
+            inspectExpression,
+          );
+          return state.inputCount >= 1 && state.tick > ready.tick
+            ? state
+            : undefined;
+        },
+        10_000,
+      );
+    } catch {
+      console.warn(
+        `Tap ${tapAttempts + 1} did not drop:`,
+        await evaluate(target.webSocketDebuggerUrl, inspectExpression),
+      );
+    }
+  }
+  if (!played) throw new Error("Touch drop failed after three taps");
   const report = {
     device: adb("shell", "getprop", "ro.product.model"),
     android: adb("shell", "getprop", "ro.build.version.release"),
     ready,
     played,
+    tapAttempts,
     wifiDisabled: true,
     mobileDataDisabled: true,
   };
