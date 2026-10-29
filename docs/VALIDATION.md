@@ -13,11 +13,12 @@
 - 微信 IIFE 在无 window/document/navigator 的 VM 宿主中执行，确认 bootstrap 到达预期的缺少 GPU 错误；这是导入顺序 smoke，不代表真实微信 GPU 验收。
 - 微信产物为独立 IIFE game.js、game.json、开发者工具配置及包内资源。依赖扫描不包含 Planck testbed/stage-js。
 - Capacitor Android 和 iOS 原生工程已生成并同步本地前端资源，包含 App/Preferences 插件，无远端 server.url。
+- CI 使用 JDK 21 和 Android SDK 编译 Debug APK，并检查 APK 内含 `assets/public/index.html` 和游戏资源；产物作为 `compose-sit-android-debug-apk` artifact 上传，供后续真机验收。
 
 ## 当前环境未验证
 
 - 微信开发者工具和微信 iOS/Android 真机运行：本环境无对应 AppID/工具/真机。Canvas 适配单测与 IIFE 构建不能替代实机验证。
-- Android APK 编译/安装与真机：当前仅有 platform-tools，缺少完整 Android SDK/platforms/build-tools。
+- Android APK 的真机安装与运行：当前没有连接 Android 设备。本地仅有 platform-tools，APK 编译已在 CI 的完整 SDK 环境完成。CI Debug APK 用于测试，不是正式签名发布包。
 - iOS 编译/安装与真机：需要 macOS/Xcode。
 - 中档 Android/iPhone 的帧率、GPU 内存、音频后台恢复及最低基础库验收；桌面软件 WebGL 的测试不能外推到真机性能。
 - 桌面 Tauri 属于 issue 指定的后续按需目标，当前不提供第二套原生容器。
