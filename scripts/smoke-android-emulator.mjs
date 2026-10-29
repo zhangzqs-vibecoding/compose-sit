@@ -77,6 +77,7 @@ const inspectExpression = `(() => {
     rulesVersion: replay?.rulesVersion,
     inputCount: replay?.inputs.length,
     tick: replay?.endTick,
+    visibility: document.visibilityState,
     pointerEvents: window.__smokePointerEvents ?? [],
   };
 })()`;
@@ -162,11 +163,50 @@ try {
     }
   }
   if (!played) throw new Error("Touch drop failed after three taps");
+  adb("shell", "input", "keyevent", "KEYCODE_HOME");
+  await waitFor("background visibility", async () => {
+    const state = await evaluate(
+      target.webSocketDebuggerUrl,
+      inspectExpression,
+    );
+    return state.visibility === "hidden" ? state : undefined;
+  });
+  await sleep(500);
+  const pausedStart = await evaluate(
+    target.webSocketDebuggerUrl,
+    inspectExpression,
+  );
+  await sleep(1500);
+  const pausedEnd = await evaluate(
+    target.webSocketDebuggerUrl,
+    inspectExpression,
+  );
+  if (pausedEnd.tick !== pausedStart.tick)
+    throw new Error(
+      `Game advanced in background: ${pausedStart.tick} -> ${pausedEnd.tick}`,
+    );
+  console.log(
+    adb("shell", "am", "start", "-W", "-n", `${appId}/.MainActivity`),
+  );
+  const resumed = await waitFor("foreground resume", async () => {
+    const state = await evaluate(
+      target.webSocketDebuggerUrl,
+      inspectExpression,
+    );
+    return state.visibility === "visible" &&
+      state.tick > pausedEnd.tick &&
+      state.inputCount === played.inputCount
+      ? state
+      : undefined;
+  });
   const report = {
     device: adb("shell", "getprop", "ro.product.model"),
     android: adb("shell", "getprop", "ro.build.version.release"),
     ready,
     played,
+    pausedStart,
+    pausedEnd,
+    resumed,
     tapAttempts,
     wifiDisabled: true,
     mobileDataDisabled: true,

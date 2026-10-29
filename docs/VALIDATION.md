@@ -14,7 +14,7 @@
 - 微信产物为独立 IIFE game.js、game.json、开发者工具配置及包内资源。依赖扫描不包含 Planck testbed/stage-js。
 - Capacitor Android 和 iOS 原生工程已生成并同步本地前端资源，包含 App/Preferences 插件，无远端 server.url。
 - CI 使用 JDK 21 和 Android SDK 编译 Debug APK，并检查 APK 内含 `assets/public/index.html` 和游戏资源；产物作为 `compose-sit-android-debug-apk` artifact 上传，供后续真机验收。
-- Android 15/API 35 x86_64 模拟器 CI 安装 Debug APK，关闭 Wi-Fi 与移动数据后启动本地游戏；WebView 调试接口确认加载状态消失、画布为 1、规则版本为 2，一次 `adb input tap` 使有效投放输入从 0 变为 1 且 tick 前进。截图核对了校徽、棋盘与最终目标；该工作流上传截图、结果 JSON 和 logcat。模拟器结果不能替代真机测试。
+- Android 15/API 35 x86_64 模拟器 CI 安装 Debug APK，关闭 Wi-Fi 与移动数据后启动本地游戏；WebView 调试接口确认加载状态消失、画布为 1、规则版本为 2，一次 `adb input tap` 使有效投放输入从 0 变为 1 且 tick 前进。随后退回桌面，检查页面隐藏且游戏 tick 停止；返回应用后检查页面可见、tick 继续且投放记录未丢失。截图核对了校徽、棋盘与最终目标；该工作流上传截图、结果 JSON 和 logcat。模拟器结果不能替代真机测试。
 - macOS CI 使用 Xcode 26.6 编译无签名的 iOS 模拟器应用，并检查应用包内含游戏入口、校徽、字体与音效；产物作为 `compose-sit-ios-simulator` artifact 上传。这证明模拟器目标可编译，不代表 iPhone 真机运行。
 
 ## 当前环境未验证
