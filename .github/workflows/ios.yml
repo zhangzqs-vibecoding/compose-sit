@@ -1,0 +1,51 @@
+name: Validate iOS simulator
+on:
+  pull_request:
+    paths:
+      - .github/workflows/ios.yml
+      - apps/mobile/**
+      - packages/**
+      - assets/**
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+  workflow_dispatch:
+
+jobs:
+  simulator:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:mobile
+      - run: pnpm --dir apps/mobile exec cap sync ios
+      - run: xcodebuild -version
+      - name: Build simulator app
+        run: |
+          xcodebuild \
+            -project apps/mobile/ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/compose-sit-ios" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+      - name: Verify bundled game assets
+        run: |
+          app="$RUNNER_TEMP/compose-sit-ios/Build/Products/Debug-iphonesimulator/App.app"
+          test -f "$app/public/index.html"
+          test -f "$app/public/schools/0.png"
+          test -f "$app/public/schools/10.png"
+          test -f "$app/public/font/ui.png"
+          test -f "$app/public/audio/drop.wav"
+          ditto -c -k --keepParent "$app" "$RUNNER_TEMP/compose-sit-ios-simulator.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compose-sit-ios-simulator
+          path: ${{ runner.temp }}/compose-sit-ios-simulator.zip
