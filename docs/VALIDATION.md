@@ -14,12 +14,13 @@
 - 微信产物为独立 IIFE game.js、game.json、开发者工具配置及包内资源。依赖扫描不包含 Planck testbed/stage-js。
 - Capacitor Android 和 iOS 原生工程已生成并同步本地前端资源，包含 App/Preferences 插件，无远端 server.url。
 - CI 使用 JDK 21 和 Android SDK 编译 Debug APK，并检查 APK 内含 `assets/public/index.html` 和游戏资源；产物作为 `compose-sit-android-debug-apk` artifact 上传，供后续真机验收。
+- macOS CI 使用 Xcode 26.6 编译无签名的 iOS 模拟器应用，并检查应用包内含游戏入口、校徽、字体与音效；产物作为 `compose-sit-ios-simulator` artifact 上传。这证明模拟器目标可编译，不代表 iPhone 真机运行。
 
 ## 当前环境未验证
 
 - 微信开发者工具和微信 iOS/Android 真机运行：本环境无对应 AppID/工具/真机。Canvas 适配单测与 IIFE 构建不能替代实机验证。
 - Android APK 的真机安装与运行：当前没有连接 Android 设备。本地仅有 platform-tools，APK 编译已在 CI 的完整 SDK 环境完成。CI Debug APK 用于测试，不是正式签名发布包。
-- iOS 编译/安装与真机：需要 macOS/Xcode。
+- iOS 真机安装与运行：当前没有 iPhone、签名环境或现场测试。CI 的模拟器编译不等于可安装的 IPA，也未验证真机 WebGL 和生命周期。一次 macOS 26 CI 模拟器启动尝试中，系统首次启动迁移约耗时 6 分钟，安装/启动步骤在 8 分钟上限内未结束，未取得应用运行画面；常规 CI 保留可靠的编译和资源验证。
 - 中档 Android/iPhone 的帧率、GPU 内存、音频后台恢复及最低基础库验收；桌面软件 WebGL 的测试不能外推到真机性能。
 - 桌面 Tauri 属于 issue 指定的后续按需目标，当前不提供第二套原生容器。
 
