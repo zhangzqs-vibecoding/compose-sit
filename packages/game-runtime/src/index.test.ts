@@ -1,6 +1,7 @@
 import { DEFAULT_RULES } from "@compose-sit/game-core";
 import { describe, expect, it } from "vitest";
-import { GameSession } from "./index";
+import packageInfo from "../package.json";
+import { GameSession, PLANCK_VERSION } from "./index";
 
 function advance(game: GameSession, ticks: number): void {
   for (let i = 0; i < ticks; i++) game.step();
@@ -113,6 +114,54 @@ describe("real Planck simulation", () => {
     expect(a.snapshot().entities).toEqual(b.snapshot().entities);
     expect(a.snapshot().score).toBe(b.snapshot().score);
     expect(b.drainEvents().every((e) => e.sessionId === 7)).toBe(true);
+  });
+  it("exports effective inputs and reproduces the same physical state", () => {
+    const game = new GameSession({ seed: 0x12345678, sessionId: 9 });
+    game.drop(360);
+    game.setPaused("hidden", true);
+    advance(game, 5);
+    game.setPaused("hidden", false);
+    for (let i = 0; i < 9; i++) {
+      game.drop(100 + i * 45);
+      game.drop(600);
+      advance(game, 65);
+    }
+    const record = game.exportReplay();
+    expect(JSON.parse(JSON.stringify(record))).toEqual(record);
+    expect(record.schemaVersion).toBe(1);
+    expect(record.rulesVersion).toBe(1);
+    expect(record.planckVersion).toBe(packageInfo.dependencies.planck);
+    expect(PLANCK_VERSION).toBe(packageInfo.dependencies.planck);
+    expect(record.seed).toBe(0x12345678);
+    expect(record.sessionId).toBe(9);
+    expect(record.rules).toEqual(DEFAULT_RULES);
+    expect(record.inputs).toHaveLength(9);
+    expect(record.inputs.map((input) => input.order)).toEqual([
+      1, 2, 3, 4, 5, 6, 7, 8, 9,
+    ]);
+    expect(record.inputs[0]).toEqual({
+      tick: 1,
+      order: 1,
+      type: "drop",
+      x: 100,
+    });
+    const replayed = new GameSession({
+      seed: record.seed,
+      sessionId: record.sessionId,
+      rules: record.rules,
+      initialEntities: record.initialEntities,
+    });
+    let nextInput = 0;
+    for (let tick = 1; tick <= record.endTick; tick++) {
+      const input = record.inputs[nextInput];
+      if (input?.tick === tick) {
+        replayed.drop(input.x);
+        nextInput++;
+      }
+      replayed.step();
+    }
+    expect(nextInput).toBe(record.inputs.length);
+    expect(replayed.snapshot()).toEqual(game.snapshot());
   });
   it("survives a dense 200-body scene without NaN or escaped bodies", () => {
     const game = new GameSession({

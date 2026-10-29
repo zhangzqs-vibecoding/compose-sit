@@ -35,7 +35,7 @@ pnpm bench
 ## 结构
 
 - `packages/game-core`：纯规则、随机序列、计分与数据校验。
-- `packages/game-runtime`：真实 Planck 物理、会话、接触合成、快照和事件；无需浏览器。
+- `packages/game-runtime`：真实 Planck 物理、会话、接触合成、快照、事件与按 tick 记录的投放；无需浏览器。
 - `packages/game-client`：Pixi 画面、固定步长循环、统一交互与宿主契约。
 - `packages/host-web`：Web 与 WebView 共用的输入、音频、存储、资源及生命周期。
 - `apps/web`、`apps/wechat`、`apps/mobile`：薄入口与对应构建配置。

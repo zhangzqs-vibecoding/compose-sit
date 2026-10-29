@@ -76,6 +76,7 @@ export interface Rules {
   readonly opening: readonly number[];
   readonly randomLevels: number;
 }
+export const RULES_VERSION = 1;
 export const DEFAULT_RULES: Rules = {
   width: 720,
   height: 1280,
