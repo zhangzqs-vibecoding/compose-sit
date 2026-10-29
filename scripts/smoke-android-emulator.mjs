@@ -87,6 +87,7 @@ try {
   );
   console.log(adb("install", "-r", apk));
   adb("shell", "svc", "wifi", "disable");
+  adb("shell", "svc", "data", "disable");
   console.log(
     adb("shell", "am", "start", "-W", "-n", `${appId}/.MainActivity`),
   );
@@ -137,7 +138,8 @@ try {
     android: adb("shell", "getprop", "ro.build.version.release"),
     ready,
     played,
-    offline: true,
+    wifiDisabled: true,
+    mobileDataDisabled: true,
   };
   writeFileSync(join(output, "result.json"), JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report));
