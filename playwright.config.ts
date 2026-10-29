@@ -50,6 +50,14 @@ export default defineConfig({
         },
       },
     },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    {
+      name: "webkit",
+      use: {
+        ...devices["Desktop Safari"],
+        launchOptions: process.env.PLAYWRIGHT_WEBKIT_EXECUTABLE_PATH
+          ? { executablePath: process.env.PLAYWRIGHT_WEBKIT_EXECUTABLE_PATH }
+          : {},
+      },
+    },
   ],
 });

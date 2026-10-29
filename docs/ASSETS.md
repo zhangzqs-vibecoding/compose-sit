@@ -18,6 +18,6 @@
 
 名称已对照实际徽章核对，修正设计稿中示例名称。顺序沿用原版，不表达学校排名。碰撞半径来自原帧高度的一半；更换图像不得改变半径。
 
-`assets/font/ui.png` 为有限字符的位图字形图集，使用 Droid Sans Fallback 生成；其 Apache-2.0 许可与归属见 `assets/font/LICENSE.txt`。使用 Pillow 与 `scripts/generate-font.py` 可重新生成。运行时不需要系统中文字库、XML 或 Canvas 文字测量。
+`assets/font/ui.png` 为有限字符的位图字形图集，中文使用 Droid Sans Fallback，拉丁/数字使用 DejaVu Sans 生成；许可与归属分别见 `assets/font/LICENSE.txt`、`assets/font/LICENSE-LATIN.txt`。使用 Pillow 与 `scripts/generate-font.py` 可重新生成。运行时不需要系统中文字库、XML 或 Canvas 文字测量。
 
 `assets/audio/*.wav` 为本项目生成的短正弦波提示音，不复用原版音频。图像/字形/声音路径清单见 `assets/manifest.json`。
