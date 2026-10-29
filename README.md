@@ -28,7 +28,7 @@ pnpm bench
 
 - Web：`pnpm build:web`，产物 `apps/web/dist`。默认相对资源路径，支持 GitHub Pages 子目录；也可通过 `BASE_PATH=/compose-sit/ pnpm build:web` 指定。
 - 微信小游戏：`pnpm build:wechat`，用微信开发者工具导入 `apps/wechat/dist`。`touristappid` 仅供访客调试；实际 AppID 在开发者工具中设置。单 IIFE `game.js`、本地资源及独立环境适配，无 HTML 入口。
-- Android/iOS：`pnpm build:mobile` 后在 `apps/mobile` 执行 `pnpm exec cap add android` / `pnpm exec cap add ios`（平台目录若已存在则跳过），随后根目录执行 `pnpm mobile:sync`、`pnpm --dir apps/mobile exec cap open android`。需 Android SDK/JDK；iOS 需 macOS/Xcode。CI 的 `android` job 会编译 Debug APK，可从运行记录下载 `compose-sit-android-debug-apk` artifact；它只供测试，真机运行仍需验收。
+- Android/iOS：`pnpm build:mobile` 后在 `apps/mobile` 执行 `pnpm exec cap add android` / `pnpm exec cap add ios`（平台目录若已存在则跳过），随后根目录执行 `pnpm mobile:sync`、`pnpm --dir apps/mobile exec cap open android`。需 Android SDK/JDK；iOS 需 macOS/Xcode。CI 的 `android` job 会编译 Debug APK，可从运行记录下载 `compose-sit-android-debug-apk` artifact；`Validate iOS simulator` 工作流可按需编译模拟器应用。两者均只供测试，真机运行仍需验收。
 
 平台支持证据和未验证项目见 [docs/VALIDATION.md](docs/VALIDATION.md)。
 
